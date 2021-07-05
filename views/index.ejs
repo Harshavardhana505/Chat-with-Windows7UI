@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Group Chat</title>
+    <style>
+     @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+   * {font-family: 'Special Elite', cursive;}
+    </style>
+   <link rel="stylesheet" href="https://unpkg.com/7.css">
+    <script src="../../socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+  </head>
+  <body>
+    <div id="messages"></div>
+    <form action="/" method="POST" id="chatForm">
+      <input id="txt" autocomplete="off" autofocus="on" oninput="isTyping()" placeholder="Type your message here..." /><button id='send'>Send</button>
+    </form>
+    <script>
+            var socket = io.connect('http://192.168.1.130:8080');
+
+            
+            $('form').submit(function(e){
+                e.preventDefault(); // prevents page reloading
+                socket.emit('chat_message', $('#txt').val());
+                $('#txt').val('');
+                return false;
+            });
+
+           
+            socket.on('chat_message', function(msg){
+                $('#messages').append($('<p>').html(msg));
+            });
+
+            
+            socket.on('is_online', function(username) {
+                $('#messages').append($('<p>').html(username));
+            });
+
+            // ask username
+            var username = prompt('Name: ');
+            socket.emit('username', username);
+
+    </script>
+  </body>
+</html>
